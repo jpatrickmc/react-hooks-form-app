@@ -1,0 +1,69 @@
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import './App.css';
+
+type FormFields = {
+  email: string;
+  password: string;
+};
+
+// 14:17 into the video
+// https://www.youtube.com/watch?v=cc_xmawJ8Kg&t=108s
+function App() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormFields>();
+
+  const onSubmit: SubmitHandler<FormFields> = (data) => {
+    console.log(data);
+  };
+
+  return (
+    <form className="space-y-4 w-1/2" onSubmit={handleSubmit(onSubmit)}>
+      <input
+        {...register('email', {
+          required: 'Email is required',
+          // pattern: {
+          //   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+          //   message: 'Invalid email address',
+          // },
+          validate: (value) => value.includes('@') || 'Email must contain @',
+        })}
+        type="text"
+        placeholder="Enter your email"
+        className="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      />
+      {errors.email && (
+        <div className="text-red-500">
+          {errors.email.message || 'Email is required'}
+        </div>
+      )}
+      <input
+        {...register('password', {
+          required: 'Password is required',
+          minLength: {
+            value: 8,
+            message: 'Password must be at least 8 characters long',
+          },
+        })}
+        type="password"
+        placeholder="Enter your password"
+        className="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      />
+      {errors.password && (
+        <div className="text-red-500">
+          {errors.password.message || 'Password is required (min 8 characters)'}
+        </div>
+      )}
+      <button
+        type="submit"
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 transform hover:scale-105"
+      >
+        Submit
+      </button>
+    </form>
+  );
+}
+
+export default App;
