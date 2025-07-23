@@ -8,16 +8,25 @@ type FormFields = {
 
 // 14:17 into the video
 // https://www.youtube.com/watch?v=cc_xmawJ8Kg&t=108s
-function App() {
+export default function App() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormFields>();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
-    console.log(data);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+      throw new Error('Email already taken'); // Simulate an error for demonstration
+      console.log(data);
+    } catch (error) {
+      console.error('Submission error:', error);
+      setError('email', {
+        message: 'This email is already taken.',
+      });
+    }
   };
 
   return (
@@ -66,5 +75,3 @@ function App() {
     </form>
   );
 }
-
-export default App;
