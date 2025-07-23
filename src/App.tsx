@@ -6,7 +6,7 @@ type FormFields = {
   password: string;
 };
 
-// 14:17 into the video
+// 23:30 into the video
 // https://www.youtube.com/watch?v=cc_xmawJ8Kg&t=108s
 export default function App() {
   const {
@@ -14,7 +14,12 @@ export default function App() {
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<FormFields>();
+  } = useForm<FormFields>({
+    defaultValues: {
+      email: 'test@example.com',
+      password: '',
+    },
+  });
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
     try {
@@ -23,7 +28,7 @@ export default function App() {
       console.log(data);
     } catch (error) {
       console.error('Submission error:', error);
-      setError('email', {
+      setError('root', {
         message: 'This email is already taken.',
       });
     }
@@ -72,6 +77,11 @@ export default function App() {
       >
         {isSubmitting ? 'Submitting...' : 'Submit'}
       </button>
+      {errors.root && (
+        <div className="text-red-500">
+          {errors.root.message || 'An error occurred'}
+        </div>
+      )}
     </form>
   );
 }
