@@ -1,10 +1,14 @@
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import './App.css';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-type FormFields = {
-  email: string;
-  password: string;
-};
+const schema = z.object({
+  email: z.email(),
+  password: z.string().min(8),
+});
+
+type FormFields = z.infer<typeof schema>;
 
 // 23:30 into the video
 // https://www.youtube.com/watch?v=cc_xmawJ8Kg&t=108s
@@ -19,6 +23,7 @@ export default function App() {
       email: 'test@example.com',
       password: '',
     },
+    resolver: zodResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
@@ -37,14 +42,7 @@ export default function App() {
   return (
     <form className="space-y-4 w-1/2" onSubmit={handleSubmit(onSubmit)}>
       <input
-        {...register('email', {
-          required: 'Email is required',
-          // pattern: {
-          //   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-          //   message: 'Invalid email address',
-          // },
-          validate: (value) => value.includes('@') || 'Email must contain @',
-        })}
+        {...register('email')}
         type="text"
         placeholder="Enter your email"
         className="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
@@ -55,13 +53,7 @@ export default function App() {
         </div>
       )}
       <input
-        {...register('password', {
-          required: 'Password is required',
-          minLength: {
-            value: 8,
-            message: 'Password must be at least 8 characters long',
-          },
-        })}
+        {...register('password')}
         type="password"
         placeholder="Enter your password"
         className="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
